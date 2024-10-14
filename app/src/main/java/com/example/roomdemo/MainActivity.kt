@@ -6,6 +6,8 @@ import android.util.Log
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.roomdemo.adapter.CustomAdapter
 import com.example.roomdemo.databinding.ActivityMainBinding
 import com.example.roomdemo.db.SubscriberDatabase
 import com.example.roomdemo.db.SubscriberRepository
@@ -14,6 +16,8 @@ import com.example.roomdemo.db.ViewModelProviderFactory
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var subscriberViewModel: SubscriberViewModel
+    private lateinit var customAdapter: CustomAdapter
+//    private lateinit var adapter: CustomAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding=DataBindingUtil.setContentView(this,R.layout.activity_main)
@@ -24,9 +28,17 @@ class MainActivity : AppCompatActivity() {
         val factory=ViewModelProviderFactory(repository)
         subscriberViewModel= ViewModelProvider(this,factory).get(SubscriberViewModel::class.java)
 
+
         binding.mySubscriberViewModel=subscriberViewModel
         binding.lifecycleOwner=this
-        binding.recycle
+        displayDataRecycle()
+    }
+
+    private fun displayDataRecycle() {
+        binding.recycle.layoutManager=LinearLayoutManager(this)
+        subscriberViewModel.susbcriber.observe(this,Observer{
+            binding.recycle.adapter=CustomAdapter(it)
+        })
     }
 
 

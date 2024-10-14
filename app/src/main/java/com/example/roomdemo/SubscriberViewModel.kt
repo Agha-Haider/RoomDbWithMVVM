@@ -26,11 +26,22 @@ class SubscriberViewModel(private  val repository: SubscriberRepository):ViewMod
     fun saveOrUpdate() {
         val name = inputName.value
         val email = inputEmail.value
-        if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(email)) {
-            val subscriber = Subscriber(0, name!!, email!!)
-            insertToSubscriber(subscriber)
+        viewModelScope.launch {
+            Dispatchers.IO
+            if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(email)) {
+                val subscriber = Subscriber(0, name!!, email!!)
+                insertToSubscriber(subscriber)
+            }
         }
 }
+
+    fun clearAllData(){
+        viewModelScope.launch {
+            Dispatchers.IO
+            repository.deleteAllSubscriber()
+            }
+        }
+
     suspend fun delete(subscriber: Subscriber){
         viewModelScope.launch(Dispatchers.IO) {
             repository.deletesubscriber(subscriber)
