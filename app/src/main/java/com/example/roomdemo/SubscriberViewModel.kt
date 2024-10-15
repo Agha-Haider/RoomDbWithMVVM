@@ -8,6 +8,7 @@ import com.example.roomdemo.db.Subscriber
 import com.example.roomdemo.db.SubscriberRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SubscriberViewModel(private val repository: SubscriberRepository) : ViewModel() {
 
@@ -30,11 +31,18 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
     fun saveOrUpdate() {
 
         if (updateorDelete){
+          viewModelScope.launch(Dispatchers.IO) {
+                subscriberUpdateOrDelete.name=inputName.value.toString()
+                subscriberUpdateOrDelete.email=inputEmail.value.toString()
+                    updateToSubscriber(subscriberUpdateOrDelete)
+              viewModelScope.launch(Dispatchers.Main){
+                  inputName.value=""
+                  inputEmail.value=""
+                  saveOrUpdate.value="Save"
+                  deleteOrClear.value="Clear"
+                  updateorDelete = false
+              }
 
-            viewModelScope.launch {
-                Dispatchers.IO
-                    val subscriber = Subscriber(subscriberUpdateOrDelete.id, subscriberUpdateOrDelete.name, subscriberUpdateOrDelete.email)
-                    updateToSubscriber(subscriber)
             }
         }
         else{
@@ -48,22 +56,31 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
                 }
             }
         }
-        val name = inputName.value
-        val email = inputEmail.value
-        viewModelScope.launch {
-            Dispatchers.IO
-            if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(email)) {
-                val subscriber = Subscriber(0, name!!, email!!)
-                insertToSubscriber(subscriber)
-            }
-        }
     }
 
     fun clearAllData() {
-        viewModelScope.launch {
-            Dispatchers.IO
-            repository.deleteAllSubscriber()
+
+        if (updateorDelete){
+
+            viewModelScope.launch(Dispatchers.IO) {
+                repository.deletesubscriber(subscriberUpdateOrDelete)
+            }
+            viewModelScope.launch(Dispatchers.Main) {
+                inputName.value=""
+                inputEmail.value=""
+                saveOrUpdate.value="Save"
+                deleteOrClear.value="Clear"
+                updateorDelete = false
+
+            }
         }
+        else{
+            viewModelScope.launch {
+                Dispatchers.IO
+                repository.deleteAllSubscriber()
+            }
+        }
+
     }
 
     suspend fun delete(subscriber: Subscriber) {
