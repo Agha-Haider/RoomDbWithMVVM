@@ -35,6 +35,13 @@ class MainActivity : AppCompatActivity(),OnCLickListener {
         binding.mySubscriberViewModel=subscriberViewModel
         binding.lifecycleOwner=this
         displayDataRecycle()
+
+    subscriberViewModel.message.observe(this,Observer{
+        it?.getContentIfNotHandled()?.let {
+            Toast.makeText(this,it,Toast.LENGTH_SHORT).show()
+            Log.d("cc", "onCreate: "+it)
+        }
+    })
     }
 
     private fun displayDataRecycle() {
