@@ -11,7 +11,9 @@ import com.example.roomdemo.db.Subscriber
 interface OnCLickListener{
     fun onClick(subscriber: Subscriber)
 }
-class CustomAdapter(private val subscriberList:List<Subscriber>,private val onCLickListener: OnCLickListener):RecyclerView.Adapter<CustomAdapter.viewHolder>() {
+class CustomAdapter(private val onCLickListener: OnCLickListener):RecyclerView.Adapter<CustomAdapter.viewHolder>() {
+
+    private val subscriberList: ArrayList<Subscriber> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): viewHolder {
         val layoutInflater=LayoutInflater.from(parent.context)
@@ -25,6 +27,10 @@ class CustomAdapter(private val subscriberList:List<Subscriber>,private val onCL
 
     override fun onBindViewHolder(holder: viewHolder, position: Int) {
         holder.onBind(subscriberList[position],onCLickListener)
+    }
+    fun setList(subscriber: List<Subscriber>){
+        subscriberList.clear()
+        subscriberList.addAll(subscriber)
     }
 
 

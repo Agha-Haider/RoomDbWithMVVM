@@ -1,6 +1,8 @@
 package com.example.roomdemo
 
+import android.os.PatternMatcher
 import android.text.TextUtils
+import android.util.Patterns
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -12,6 +14,7 @@ import com.example.roomdemo.event.Event
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.intellij.lang.annotations.Pattern
 
 class SubscriberViewModel(private val repository: SubscriberRepository) : ViewModel() {
 
@@ -35,40 +38,53 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
 
     fun saveOrUpdate() {
         if (updateorDelete) {
-            viewModelScope.launch(Dispatchers.IO) {
-                subscriberUpdateOrDelete.name = inputName.value.toString()
-                subscriberUpdateOrDelete.email = inputEmail.value.toString()
-                updateToSubscriber(subscriberUpdateOrDelete)
-                viewModelScope.launch(Dispatchers.Main) {
-                    inputName.value = ""
-                    inputEmail.value = ""
-                    saveOrUpdate.value = "Save"
-                    deleteOrClear.value = "Clear"
-                    updateorDelete = false
-                    statusMessage.value = Event("subscribers updated sucessfully")
+
+                viewModelScope.launch(Dispatchers.IO) {
+                    subscriberUpdateOrDelete.name = inputName.value.toString()
+                    subscriberUpdateOrDelete.email = inputEmail.value.toString()
+                    updateToSubscriber(subscriberUpdateOrDelete)
+                    viewModelScope.launch(Dispatchers.Main) {
+                        inputName.value = ""
+                        inputEmail.value = ""
+                        saveOrUpdate.value = "Save"
+                        deleteOrClear.value = "Clear"
+                        updateorDelete = false
+                        statusMessage.value = Event("subscribers updated sucessfully")
+                    }
                 }
-            }
         } else {
             val name = inputName.value
             val email = inputEmail.value
-            viewModelScope.launch {
-                Dispatchers.IO
-                if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(email)) {
-                    val subscriber = Subscriber(0, name!!, email!!)
-                    insertToSubscriber(subscriber)
-                }
-                withContext(Dispatchers.Main) {
-                    statusMessage.value = Event("subscribers inserted sucessfully")
-                }
+
+
+
+            if (inputName.value == null || inputEmail.value == null) {
+                statusMessage.value = Event("please insert name and email")
+            }
+
+            else if (!Patterns.EMAIL_ADDRESS.matcher(inputEmail.value.toString()).matches()) {
+                statusMessage.value = Event("invalid email address")
+
+            }
+              else{
+                    viewModelScope.launch {
+                        Dispatchers.IO
+                        if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(email)) {
+                            val subscriber = Subscriber(0, name!!, email!!)
+                            insertToSubscriber(subscriber)
+                        }
+                        withContext(Dispatchers.Main) {
+                            statusMessage.value = Event("subscribers inserted sucessfully")
+                        }
+
+                    }
 
             }
         }
     }
 
     fun clearAllData() {
-
         if (updateorDelete) {
-
             viewModelScope.launch(Dispatchers.IO) {
                 repository.deletesubscriber(subscriberUpdateOrDelete)
                 viewModelScope.launch(Dispatchers.Main) {
@@ -90,9 +106,13 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
             }
             viewModelScope.launch(Dispatchers.Main) {
                 statusMessage.value = Event("All subscribers deleted sucessfully")
+                inputName.value = ""
+                inputEmail.value = ""
+                saveOrUpdate.value = "Save"
+                deleteOrClear.value = "Clear"
+                updateorDelete = false
             }
         }
-
     }
 
     suspend fun delete(subscriber: Subscriber) {
@@ -122,7 +142,5 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
         deleteOrClear.value = "Delete"
         updateorDelete = true
         subscriberUpdateOrDelete = subscriber
-
-
     }
 }

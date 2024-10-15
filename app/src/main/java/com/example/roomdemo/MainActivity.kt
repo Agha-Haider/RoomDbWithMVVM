@@ -16,45 +16,47 @@ import com.example.roomdemo.db.SubscriberDatabase
 import com.example.roomdemo.db.SubscriberRepository
 import com.example.roomdemo.db.ViewModelProviderFactory
 
-class MainActivity : AppCompatActivity(),OnCLickListener {
+class MainActivity : AppCompatActivity(), OnCLickListener {
     private lateinit var binding: ActivityMainBinding
     private lateinit var subscriberViewModel: SubscriberViewModel
     private lateinit var customAdapter: CustomAdapter
-//    private lateinit var adapter: CustomAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding=DataBindingUtil.setContentView(this,R.layout.activity_main)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         setContentView(binding.root)
 
-        val dao=SubscriberDatabase.getInstance(application).subscriberDAO
-        val repository=SubscriberRepository(dao)
-        val factory=ViewModelProviderFactory(repository)
-        subscriberViewModel= ViewModelProvider(this,factory).get(SubscriberViewModel::class.java)
+        val dao = SubscriberDatabase.getInstance(application).subscriberDAO
+        val repository = SubscriberRepository(dao)
+        val factory = ViewModelProviderFactory(repository)
+        subscriberViewModel = ViewModelProvider(this, factory).get(SubscriberViewModel::class.java)
+
+        binding.mySubscriberViewModel = subscriberViewModel
+        binding.lifecycleOwner = this
+
+        customAdapter = CustomAdapter(this)
+        binding.recycle.layoutManager = LinearLayoutManager(this)
+        binding.recycle.adapter = customAdapter
+        displayRecycleData()
 
 
-        binding.mySubscriberViewModel=subscriberViewModel
-        binding.lifecycleOwner=this
-        displayDataRecycle()
-
-    subscriberViewModel.message.observe(this,Observer{
-        it?.getContentIfNotHandled()?.let {
-            Toast.makeText(this,it,Toast.LENGTH_SHORT).show()
-            Log.d("cc", "onCreate: "+it)
-        }
-    })
+        subscriberViewModel.message.observe(this, Observer {
+            it?.getContentIfNotHandled()?.let {
+                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+                Log.d("cc", "onCreate: " + it)
+            }
+        })
     }
 
-    private fun displayDataRecycle() {
-        binding.recycle.layoutManager=LinearLayoutManager(this)
-        subscriberViewModel.susbcriber.observe(this,Observer{
-            binding.recycle.adapter=CustomAdapter(it,this)
+    private fun displayRecycleData() {
+        subscriberViewModel.susbcriber.observe(this, Observer {
+            customAdapter.setList(it)
+            customAdapter.notifyDataSetChanged()
         })
     }
 
     override fun onClick(subscriber: Subscriber) {
         subscriberViewModel.updateOrDelete(subscriber)
-        Toast.makeText(this,"Clicked "+subscriber.name,Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Clicked " + subscriber.name, Toast.LENGTH_SHORT).show()
     }
-
-
 }
