@@ -8,7 +8,10 @@ import com.example.roomdemo.R
 import com.example.roomdemo.databinding.ListItemsBinding
 import com.example.roomdemo.db.Subscriber
 
-class CustomAdapter(private val subscriberList:List<Subscriber>):RecyclerView.Adapter<CustomAdapter.viewHolder>() {
+interface OnCLickListener{
+    fun onClick(subscriber: Subscriber)
+}
+class CustomAdapter(private val subscriberList:List<Subscriber>,private val onCLickListener: OnCLickListener):RecyclerView.Adapter<CustomAdapter.viewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): viewHolder {
         val layoutInflater=LayoutInflater.from(parent.context)
@@ -21,16 +24,19 @@ class CustomAdapter(private val subscriberList:List<Subscriber>):RecyclerView.Ad
     }
 
     override fun onBindViewHolder(holder: viewHolder, position: Int) {
-        holder.onBind(subscriberList[position])
+        holder.onBind(subscriberList[position],onCLickListener)
     }
 
 
     class viewHolder(val binding: ListItemsBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun onBind(subscriber: Subscriber){
+        fun onBind(subscriber: Subscriber,onCLickListener: OnCLickListener){
           binding.name.text=subscriber.name
             binding.email.text=subscriber.email
 
+          binding.clickedLinear.setOnClickListener{
+              onCLickListener.onClick(subscriber)
+          }
         }
 
     }

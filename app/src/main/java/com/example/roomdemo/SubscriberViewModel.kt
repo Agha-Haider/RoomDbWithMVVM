@@ -16,6 +16,9 @@ class SubscriberViewModel(private  val repository: SubscriberRepository):ViewMod
 
     val saveOrUpdate=MutableLiveData<String>()
     val deleteOrClear=MutableLiveData<String>()
+    private lateinit var subscriberUpdateOrDelete: Subscriber
+
+    private var updateorDelete=false
 
     val susbcriber=repository.dao
 
@@ -51,5 +54,17 @@ class SubscriberViewModel(private  val repository: SubscriberRepository):ViewMod
         viewModelScope.launch(Dispatchers.IO) {
             repository.insertSubscriber(subscriber)
         }
+    }
+
+    fun updateOrDelete(subscriber: Subscriber){
+
+            inputName.value=subscriber.name
+            inputEmail.value=subscriber.email
+
+            saveOrUpdate.value="update"
+            deleteOrClear.value="Delete"
+
+
+
     }
 }
