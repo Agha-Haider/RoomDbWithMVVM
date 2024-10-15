@@ -1,5 +1,7 @@
 package com.example.roomdemo.event
 
+import android.util.Log
+
 open class Event<out T>(private val content: T) {
 
     var hasBeenHandled = false

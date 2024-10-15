@@ -66,9 +66,7 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
     }
 
     fun clearAllData() {
-
         if (updateorDelete) {
-
             viewModelScope.launch(Dispatchers.IO) {
                 repository.deletesubscriber(subscriberUpdateOrDelete)
                 viewModelScope.launch(Dispatchers.Main) {
@@ -92,7 +90,6 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
                 statusMessage.value = Event("All subscribers deleted sucessfully")
             }
         }
-
     }
 
     suspend fun delete(subscriber: Subscriber) {
@@ -122,7 +119,5 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
         deleteOrClear.value = "Delete"
         updateorDelete = true
         subscriberUpdateOrDelete = subscriber
-
-
     }
 }
