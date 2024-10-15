@@ -9,24 +9,45 @@ import com.example.roomdemo.db.SubscriberRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class SubscriberViewModel(private  val repository: SubscriberRepository):ViewModel() {
+class SubscriberViewModel(private val repository: SubscriberRepository) : ViewModel() {
 
-    val inputName=MutableLiveData<String>()
-    val inputEmail=MutableLiveData<String>()
+    val inputName = MutableLiveData<String>()
+    val inputEmail = MutableLiveData<String>()
 
-    val saveOrUpdate=MutableLiveData<String>()
-    val deleteOrClear=MutableLiveData<String>()
+    val saveOrUpdate = MutableLiveData<String>()
+    val deleteOrClear = MutableLiveData<String>()
     private lateinit var subscriberUpdateOrDelete: Subscriber
 
-    private var updateorDelete=false
+    private var updateorDelete = false
 
-    val susbcriber=repository.dao
+    val susbcriber = repository.dao
 
     init {
-        saveOrUpdate.value="Save"
-        deleteOrClear.value="Clear All"
+        saveOrUpdate.value = "Save"
+        deleteOrClear.value = "Clear All"
     }
+
     fun saveOrUpdate() {
+
+        if (updateorDelete){
+
+            viewModelScope.launch {
+                Dispatchers.IO
+                    val subscriber = Subscriber(subscriberUpdateOrDelete.id, subscriberUpdateOrDelete.name, subscriberUpdateOrDelete.email)
+                    updateToSubscriber(subscriber)
+            }
+        }
+        else{
+            val name = inputName.value
+            val email = inputEmail.value
+            viewModelScope.launch {
+                Dispatchers.IO
+                if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(email)) {
+                    val subscriber = Subscriber(0, name!!, email!!)
+                    insertToSubscriber(subscriber)
+                }
+            }
+        }
         val name = inputName.value
         val email = inputEmail.value
         viewModelScope.launch {
@@ -36,34 +57,41 @@ class SubscriberViewModel(private  val repository: SubscriberRepository):ViewMod
                 insertToSubscriber(subscriber)
             }
         }
-}
+    }
 
-    fun clearAllData(){
+    fun clearAllData() {
         viewModelScope.launch {
             Dispatchers.IO
             repository.deleteAllSubscriber()
-            }
         }
+    }
 
-    suspend fun delete(subscriber: Subscriber){
+    suspend fun delete(subscriber: Subscriber) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.deletesubscriber(subscriber)
         }
     }
+
     private fun insertToSubscriber(subscriber: Subscriber) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.insertSubscriber(subscriber)
         }
     }
 
-    fun updateOrDelete(subscriber: Subscriber){
+    suspend fun updateToSubscriber(subscriber: Subscriber){
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.updateSubscriber(subscriber)
+        }
+    }
+    fun updateOrDelete(subscriber: Subscriber) {
 
-            inputName.value=subscriber.name
-            inputEmail.value=subscriber.email
+        inputName.value = subscriber.name
+        inputEmail.value = subscriber.email
 
-            saveOrUpdate.value="update"
-            deleteOrClear.value="Delete"
-
+        saveOrUpdate.value = "update"
+        deleteOrClear.value = "Delete"
+        updateorDelete = true
+        subscriberUpdateOrDelete=subscriber
 
 
     }

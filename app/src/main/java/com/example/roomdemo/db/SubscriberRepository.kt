@@ -9,7 +9,7 @@ class SubscriberRepository(private  val subscriberDAO: SubscriberDAO) {
     }
 
     suspend fun updateSubscriber(subscriber: Subscriber){
-        subscriberDAO.deleteSubscriber(subscriber)
+        subscriberDAO.updateSubscriber(subscriber)
     }
 
     suspend fun deletesubscriber(subscriber: Subscriber){
