@@ -46,7 +46,6 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
                     deleteOrClear.value = "Clear"
                     updateorDelete = false
                     statusMessage.value = Event("subscribers updated sucessfully")
-
                 }
             }
         } else {
