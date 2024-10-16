@@ -1,8 +1,8 @@
-package com.example.roomdemo.db
+package com.example.roomdbwithmvvm.db
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.roomdemo.SubscriberViewModel
+import com.example.roomdbwithmvvm.SubscriberViewModel
 
 class ViewModelProviderFactory(private val repository: SubscriberRepository):ViewModelProvider.Factory {
 

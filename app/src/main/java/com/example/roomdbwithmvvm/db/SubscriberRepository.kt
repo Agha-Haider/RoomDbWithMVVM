@@ -1,4 +1,4 @@
-package com.example.roomdemo.db
+package com.example.roomdbwithmvvm.db
 
 class SubscriberRepository(private  val subscriberDAO: SubscriberDAO) {
 

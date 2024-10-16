@@ -1,4 +1,4 @@
-package com.example.roomdemo.db
+package com.example.roomdbwithmvvm.db
 
 import android.annotation.SuppressLint
 import android.content.Context

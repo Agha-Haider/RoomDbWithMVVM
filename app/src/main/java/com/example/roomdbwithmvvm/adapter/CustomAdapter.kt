@@ -1,12 +1,12 @@
-package com.example.roomdemo.adapter
+package com.example.roomdbwithmvvm.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.roomdemo.R
-import com.example.roomdemo.databinding.ListItemsBinding
-import com.example.roomdemo.db.Subscriber
+import com.example.roomdbwithmvvm.R
+import com.example.roomdbwithmvvm.databinding.ListItemsBinding
+import com.example.roomdbwithmvvm.db.Subscriber
 
 interface OnCLickListener{
     fun onClick(subscriber: Subscriber)

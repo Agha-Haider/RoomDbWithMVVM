@@ -1,20 +1,17 @@
-package com.example.roomdemo
+package com.example.roomdbwithmvvm
 
-import android.os.PatternMatcher
 import android.text.TextUtils
 import android.util.Patterns
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.roomdemo.db.Subscriber
-import com.example.roomdemo.db.SubscriberRepository
-import com.example.roomdemo.event.Event
+import com.example.roomdbwithmvvm.db.Subscriber
+import com.example.roomdbwithmvvm.db.SubscriberRepository
+import com.example.roomdbwithmvvm.event.Event
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.intellij.lang.annotations.Pattern
 
 class SubscriberViewModel(private val repository: SubscriberRepository) : ViewModel() {
 

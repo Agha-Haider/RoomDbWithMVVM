@@ -1,6 +1,4 @@
-package com.example.roomdemo.event
-
-import android.util.Log
+package com.example.roomdbwithmvvm.event
 
 open class Event<out T>(private val content: T) {
 

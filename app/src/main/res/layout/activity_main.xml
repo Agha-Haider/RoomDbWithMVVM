@@ -8,7 +8,7 @@
     <data>
         <variable
             name="mySubscriberViewModel"
-            type="com.example.roomdemo.SubscriberViewModel" />
+            type="com.example.roomdbwithmvvm.SubscriberViewModel" />
     </data>
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
